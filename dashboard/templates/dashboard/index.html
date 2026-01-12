@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ titulo }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        
+        body { 
+            background-color: #a9aaacff; 
+            color: #333;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Contenedores blancos con bordes definidos */
+        .section-box { 
+            background: #ffffff; 
+            border: 1px solid #dee2e6;
+            border-radius: 8px; 
+            padding: 25px; 
+            margin-bottom: 30px; 
+        }
+
+        /* Títulos de sección con bordes de color discretos */
+        .border-red { border-top: 5px solid #dc3545; }
+        .border-blue { border-top: 5px solid #0d6efd; }
+        .border-green { border-top: 5px solid #198754; }
+        .border-orange { border-top: 5px solid #ffc107; }
+        .border-cyan { border-top: 5px solid #0dcaf0; }
+
+        .badge-label { 
+            font-size: 0.9rem; 
+            padding: 8px 15px; 
+            border-radius: 4px; 
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        /* Tablas con scroll para datos extensos */
+        .table-responsive { 
+            max-height: 400px; 
+            overflow-y: auto; 
+            font-size: 0.8rem; 
+            border: 1px solid #eee;
+            margin-top: 10px;
+        }
+
+        /* Caja de código estilo consola clásica */
+        .code-box { 
+            background: #2b2b2b; 
+            color: #f8f8f2; 
+            padding: 15px; 
+            border-radius: 5px; 
+            font-family: 'Consolas', 'Monaco', monospace; 
+            font-size: 0.85rem; 
+            line-height: 1.5; 
+            white-space: pre-wrap; 
+            margin-bottom: 10px;
+        }
+
+        .img-container {
+            background: #fdfdfd;
+            padding: 10px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+
+        h6 { 
+            color: #555; 
+            text-transform: uppercase; 
+            font-size: 0.8rem; 
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="mb-5 fw-bold text-secondary">Proyecto</h1>
+
+        <div class="section-box border-red">
+            <span class="badge bg-danger badge-label">05_Regresion_Logistica</span>
+            <p><strong>el correo es spam :</strong> {{ datos_05.mail_dict }}</p>
+            
+            <div class="code-box">
+<span style="color: #ffffffff;">e-mail : {{ datos_05.prep_email_text }}</span>
+
+
+<span style="color: #ffffffff;">Caracteristia de entradas : {{ datos_05.cv_features }}</span>
+            </div>
+
+            <div class="code-box">
+                <strong>Features (OneHot):</strong> {{ datos_05.oh_features }}
+                <strong>Values (OneHot):</strong> {{ datos_05.oh_values }}
+            </div>
+
+        <div class="section-box border-blue">
+            <span class="badge bg-primary badge-label">06_Vizualizacion_Del_DataSet</span>
+            <div class="row">
+                {% for img in fotos_06 %}
+                <div class="col-12 text-center mb-3">
+                    <div class="img-container">
+                        <img src="data:image/png;base64,{{ img }}" class="img-fluid">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="section-box border-green">
+            <span class="badge bg-success badge-label">07_Division_del_DataSet</span>
+            <div class="row">
+                {% for img in fotos_07 %}
+                <div class="col-md-6 mb-3">
+                    <div class="img-container">
+                        <img src="data:image/png;base64,{{ img }}" class="img-fluid">
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="section-box border-orange">
+            <span class="badge bg-warning text-dark badge-label">08_Preparacion-del-DataSet</span>
+    
+            <h6>Valores Nulos Inyectados:</h6>
+            <div class="table-responsive mb-4">
+                {{ datos_08.nulos|safe }}
+            </div>
+
+            <h6>Datos Limpios (Todas las columnas numéricas):</h6>
+            <div class="table-responsive mb-4">
+                {{ datos_08.X_train_clean|safe }}
+            </div>
+
+            <h6>Escalado Robusto (Visualización de todas las columnas):</h6>
+            <div class="table-responsive">
+                {{ datos_08.X_train_scaled|safe }}
+            </div>
+        </div>
+
+        <div class="section-box border-cyan">
+            <span class="badge bg-info text-dark badge-label">09_Creacion-de-Transformadores-y-Pipeline-Personalizados</span>
+            <h6>X_train (Nulos):</h6>
+            <div class="table-responsive mb-4">{{ datos_09.table_1|safe }}</div>
+            <h6>X_train_prep (DeleteNanRows):</h6>
+            <div class="table-responsive mb-4">{{ datos_09.table_2|safe }}</div>
+            <h6>X_train_prep_df (Final):</h6>
+            <div class="table-responsive">{{ datos_09.table_3|safe }}</div>
+        </div>
+    </div>
+</body>
+</html>

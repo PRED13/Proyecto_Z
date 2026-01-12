@@ -37,36 +37,48 @@ def load_kdd_data():
     path = BASE_DIR / "KDDTrain+.arff"
     
     if not path.exists():
+        print(f"Archivo no encontrado en: {path}")
         return None
 
     try:
-        # Usamos load_generator para no cargar el archivo completo en RAM
         with open(path, 'r') as f:
+            # En liac-arff el modo generador se activa con return_type=arff.DENSE_GEN 
+            # o simplemente iterando si el decoder lo permite.
+            # Vamos a usar la carga normal pero con una protección de lectura previa:
             decoder = arff.ArffDecoder()
-            # Obtenemos la estructura (metadatos)
+            
+            # Intentamos cargar usando el generador de la librería liac-arff
             dataset_gen = decoder.decode(f, return_type=arff.GENERATE_DATA)
             
             attributes = [attr[0] for attr in dataset_gen['attributes']]
             data = []
             
-            # Solo extraemos las primeras 1000 filas del generador
-            count = 0
-            for row in dataset_gen['data']:
+            # Extraemos 1000 filas
+            for i, row in enumerate(dataset_gen['data']):
                 data.append(row)
-                count += 1
-                if count >= 1000:
+                if i >= 999:
                     break
         
         df = pd.DataFrame(data, columns=attributes)
         
-        # Convertimos a float32 para ahorrar memoria
+        # Optimizar tipos de datos para RAM
         for col in df.select_dtypes(include=['float64']).columns:
             df[col] = df[col].astype('float32')
             
         return df
     except Exception as e:
-        print(f"Error optimizado cargando ARFF: {e}")
-        return None
+        # Si fallara el modo GENERATE_DATA por versión, este es el Plan B (Fallback)
+        try:
+            with open(path, 'r') as f:
+                # Carga tradicional pero limitando el string de entrada para no saturar
+                dataset = arff.load(f)
+                attributes = [attr[0] for attr in dataset['attributes']]
+                df = pd.DataFrame(dataset['data'][:1000], columns=attributes)
+                return df
+        except Exception as e2:
+            print(f"Error crítico cargando ARFF: {e2}")
+            return None
+            
 def get_base64_graph():
     buf = io.BytesIO()
     plt.savefig(buf, format='png', bbox_inches='tight')

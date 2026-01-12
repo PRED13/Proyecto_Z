@@ -1,5 +1,11 @@
+import matplotlib
+matplotlib.use('Agg') # DEBE IR PRIMERO
+import matplotlib.pyplot as plt
+
+# Luego el resto de importaciones
 import pandas as pd
 import arff
+# ... resto de tus imports ...
 import os
 import numpy as np
 import io
@@ -14,10 +20,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.base import BaseEstimator, TransformerMixin
 
-# CONFIGURACIÓN CRÍTICA PARA RENDER
-import matplotlib
-matplotlib.use('Agg') 
-import matplotlib.pyplot as plt
+
 
 # --- CLASE AUXILIAR PARA ARCHIVO 09 ---
 class DeleteNanRows(BaseEstimator, TransformerMixin):

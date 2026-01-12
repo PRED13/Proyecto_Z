@@ -37,24 +37,33 @@ def load_kdd_data():
         return None
 
     try:
+        # Usamos load_generator para no cargar el archivo completo en RAM
         with open(path, 'r') as f:
-            dataset = arff.load(f)
+            decoder = arff.ArffDecoder()
+            # Obtenemos la estructura (metadatos)
+            dataset_gen = decoder.decode(f, return_type=arff.GENERATE_DATA)
             
-        attributes = [attr[0] for attr in dataset['attributes']]
-        # Muestreo de 1000 filas para no saturar los 512MB de RAM
-        data_slice = dataset['data'][:1000]
+            attributes = [attr[0] for attr in dataset_gen['attributes']]
+            data = []
+            
+            # Solo extraemos las primeras 1000 filas del generador
+            count = 0
+            for row in dataset_gen['data']:
+                data.append(row)
+                count += 1
+                if count >= 1000:
+                    break
         
-        df = pd.DataFrame(data_slice, columns=attributes)
+        df = pd.DataFrame(data, columns=attributes)
         
-        # Reducción de precisión para ahorrar memoria
+        # Convertimos a float32 para ahorrar memoria
         for col in df.select_dtypes(include=['float64']).columns:
             df[col] = df[col].astype('float32')
             
         return df
     except Exception as e:
-        print(f"Error cargando ARFF: {e}")
+        print(f"Error optimizado cargando ARFF: {e}")
         return None
-
 def get_base64_graph():
     buf = io.BytesIO()
     plt.savefig(buf, format='png', bbox_inches='tight')
